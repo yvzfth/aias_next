@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <main className='p-4 bg-white'>
       <div className='h-screen flex flex-col items-center justify-center'>
-        <Card className='max-w-full w-[340px] h-fit'>
+        <Card className='max-w-full w-[440px] h-fit'>
           <div className='text-center mx-auto w-fit mt-4'>
             <img src='/logo-kucuk.png' width='140' />
           </div>
