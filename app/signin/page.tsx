@@ -11,12 +11,13 @@ import {
   Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
-
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, useState } from 'react';
+import { FaPerson } from 'react-icons/fa6';
 // import Link from 'next/link';
 
 export default function Home() {
+  const router = useRouter();
   const [selected, setSelected] = useState('login');
   const [formData, setFormData] = useState({
     phone: '',
@@ -46,7 +47,8 @@ export default function Home() {
             password: formData.password,
           }
         );
-        console.log(response.data); // Handle successful login
+        const { authorisation, user } = response.data;
+        if (authorisation?.token) router.push('/applications');
       } catch (error) {
         console.error(error); // Handle login error
       }
@@ -59,7 +61,7 @@ export default function Home() {
   return (
     <main className='p-4 bg-white'>
       <div className='h-screen flex flex-col items-center justify-center'>
-        <Card className='max-w-full w-[440px] h-fit'>
+        <Card className='max-w-full w-[340px] h-fit'>
           <div className='text-center mx-auto w-fit mt-4'>
             <img src='/logo-kucuk.png' width='140' />
           </div>
@@ -87,7 +89,6 @@ export default function Home() {
                   <Input
                     required
                     label='Telefon'
-                    placeholder='(5__) ___ __ __'
                     type='phone'
                     name='phone'
                     value={formData.phone}
@@ -96,7 +97,6 @@ export default function Home() {
                   <Input
                     required
                     label='Şifre'
-                    placeholder='Şifre giriniz'
                     type='password'
                     name='password'
                     value={formData.password}
@@ -118,9 +118,7 @@ export default function Home() {
               <Tab key='sign-up' title='Sign up'>
                 <form className='flex flex-col gap-4 '>
                   <Input
-                    size='sm'
-                    startContent={<i className='bi bi-person'></i>}
-                    placeholder='İsim'
+                    label='İsim'
                     name='firstname'
                     required
                     value={formData.firstname}
@@ -128,9 +126,7 @@ export default function Home() {
                   />
 
                   <Input
-                    size='sm'
-                    startContent={<i className='bi bi-person'></i>}
-                    placeholder='Soyisim'
+                    label='Soyisim'
                     name='lastname'
                     required
                     value={formData.lastname}
@@ -138,10 +134,8 @@ export default function Home() {
                   />
 
                   <Input
-                    size='sm'
-                    startContent={<i className='bi bi-envelope'></i>}
+                    label='Email'
                     type='email'
-                    placeholder='Email'
                     name='email'
                     required
                     value={formData.email}
@@ -149,10 +143,8 @@ export default function Home() {
                   />
 
                   <Input
-                    size='sm'
-                    startContent={<i className='bi bi-phone'></i>}
+                    label='Telefon'
                     type='tel'
-                    placeholder='(5__) ___ __ __'
                     name='phone'
                     required
                     value={formData.phone}
@@ -160,14 +152,8 @@ export default function Home() {
                   />
 
                   <Input
-                    size='sm'
-                    startContent={
-                      <Tooltip content='Şifreniz sadece sayı içeremez!'>
-                        <i className='bi bi-shield-lock'></i>
-                      </Tooltip>
-                    }
+                    label='Şifre'
                     type='password'
-                    placeholder='Şifre'
                     name='password'
                     required
                     pattern='.*[^\d].*'
