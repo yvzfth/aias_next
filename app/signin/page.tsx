@@ -7,13 +7,10 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
-  Tooltip,
 } from '@nextui-org/react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { ChangeEvent, useState } from 'react';
-import { FaPerson } from 'react-icons/fa6';
 // import Link from 'next/link';
 
 export default function Home() {
@@ -48,7 +45,11 @@ export default function Home() {
           }
         );
         const { authorisation, user } = response.data;
-        if (authorisation?.token) router.push('/applications');
+        if (authorisation?.token) {
+          localStorage.setItem('token', authorisation.token);
+          localStorage.setItem('user', JSON.stringify(user));
+          router.push('/applications');
+        }
       } catch (error) {
         console.error(error); // Handle login error
       }

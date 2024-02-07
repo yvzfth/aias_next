@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -12,13 +12,27 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
+  Avatar,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  User,
 } from '@nextui-org/react';
+import { FaPlus } from 'react-icons/fa6';
 
 export default function NavbaComponent() {
   const pathname = usePathname();
   const currentPath = pathname.split('/').pop() || 'index';
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user')!);
+    setUser(userData);
+  }, []);
 
   return (
     <Navbar
@@ -51,13 +65,13 @@ export default function NavbaComponent() {
       <NavbarContent className='sm:hidden pr-3' justify='center'>
         <Link href='/'>
           <NavbarBrand className=' flex gap-4'>
-            <Image width={50} height={50} alt='logo' src={'/logo-kucuk.png'} />{' '}
+            <Image width={50} height={50} alt='logo' src={'/logo-kucuk.png'} />
           </NavbarBrand>
         </Link>
       </NavbarContent>
       <NavbarBrand className='hidden sm:flex'>
         <Link href='/' className='flex gap-4 items-center'>
-          <Image width={50} height={50} alt='logo' src={'/logo-kucuk.png'} />
+          <Image width={100} height={66} alt='logo' src={'/logo-kucuk.png'} />
         </Link>
       </NavbarBrand>
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
@@ -87,13 +101,55 @@ export default function NavbaComponent() {
         ))}
       </NavbarContent>
       <NavbarContent justify='end'>
-        <NavbarItem className='hidden lg:flex'>
-          <Link href='#'>Login</Link>
-        </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color='primary' href='#' variant='flat'>
-            Sign Up
-          </Button>
+          <Link href='/apply'>
+            <Button className='sm:hidden' variant='ghost' color='primary'>
+              <FaPlus />
+            </Button>
+            <Button
+              className='hidden sm:flex'
+              variant='ghost'
+              color='primary'
+              startContent={<FaPlus />}
+            >
+              Başvuru
+            </Button>
+          </Link>
+        </NavbarItem>
+        <NavbarItem className='sm:hidden'>
+          <Dropdown placement='bottom-start'>
+            <DropdownTrigger>
+              <Avatar as='button' color='primary' size='sm' alt='avatar' />
+            </DropdownTrigger>
+            <DropdownMenu aria-label='User Actions' variant='flat'>
+              <DropdownItem key='settings'>Ayarlarım</DropdownItem>
+              <DropdownItem key='logout' color='danger'>
+                Çıkış Yap
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </NavbarItem>
+        <NavbarItem className='hidden sm:flex'>
+          <Dropdown placement='bottom-start'>
+            <DropdownTrigger>
+              <Button variant='bordered' className='transition-transform h-fit'>
+                {user && (
+                  <div className='flex flex-col items-center justify-center '>
+                    <span className='font-semibold'>
+                      {user.firstname + ' ' + user.lastname}
+                    </span>
+                    <span className='text-xs text-gray-700'>{user.email}</span>
+                  </div>
+                )}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label='User Actions' variant='flat'>
+              <DropdownItem key='settings'>Ayarlarım</DropdownItem>
+              <DropdownItem key='logout' color='danger'>
+                Çıkış Yap
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>

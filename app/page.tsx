@@ -1,13 +1,11 @@
 'use client';
 import NavbaComponent from '@/components/Navbar';
-import React from 'react';
 
-const Dashboard = () => {
-  return (
-    <div>
-      <NavbaComponent />
-    </div>
-  );
+import React, { useState } from 'react';
+
+const Home = () => {
+  const [authenticated, setAuthenticated] = useState(false);
+  return <NavbaComponent />;
 };
 
-export default Dashboard;
+export default Home;
