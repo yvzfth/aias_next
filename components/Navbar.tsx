@@ -123,7 +123,7 @@ export default function NavbaComponent() {
             </DropdownTrigger>
             <DropdownMenu aria-label='User Actions' variant='flat'>
               <DropdownItem key='settings'>Ayarlarım</DropdownItem>
-              <DropdownItem key='logout' color='danger'>
+              <DropdownItem key='logout' color='danger' >
                 Çıkış Yap
               </DropdownItem>
             </DropdownMenu>

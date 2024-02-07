@@ -1,0 +1,103 @@
+/* Dashboard.css */
+
+.container {
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+
+/* Dashboard.css */
+
+.container {
+    max-width: 80%;
+    margin: 20px auto 0;
+    /* Sayfayı yatay olarak ortala */
+    overflow-x: auto;
+    /* İçeriği yatay olarak kaydırılabilir hale getir */
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    /* Tabloyu yatay olarak kaydırılabilir hale getir */
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+    /* Metinlerin satırdan düşmemesini sağlar */
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+    /* Metinlerin satırdan düşmemesini sağlar */
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover {
+    background-color: #f2f2f2;
+}

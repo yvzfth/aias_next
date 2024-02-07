@@ -27,24 +27,34 @@ export default function Home() {
   const handleSubmit = async (e: any) => {
     if (selected !== 'login') {
       try {
-        const response = await axios.post(
-          process.env.NEXT_PUBLIC_SERVER_URL + '/user/register',
-          formData
-        );
-        console.log(response.data); // Handle success response
+        const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/user/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data); // Handle success response
       } catch (error) {
         console.error(error); // Handle error
       }
     } else {
       try {
-        const response = await axios.post(
-          process.env.NEXT_PUBLIC_SERVER_URL + '/user/login',
-          {
+        const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/user/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
             phone: formData.phone,
             password: formData.password,
-          }
-        );
-        const { authorisation, user } = response.data;
+          }),
+        });
+        const data = await response.json();
+        const { authorisation, user } = data;
         if (authorisation?.token) {
           localStorage.setItem('token', authorisation.token);
           localStorage.setItem('user', JSON.stringify(user));
@@ -55,7 +65,7 @@ export default function Home() {
       }
     }
   };
-
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
