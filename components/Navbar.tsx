@@ -103,7 +103,12 @@ export default function NavbaComponent() {
       <NavbarContent justify='end'>
         <NavbarItem>
           <Link href='/apply'>
-            <Button className='sm:hidden' variant='ghost' color='primary'>
+            <Button
+              size='sm'
+              className='sm:hidden !max-w-fit !p-0 !m-0 min-w-8 rounded-full'
+              variant='ghost'
+              color='primary'
+            >
               <FaPlus />
             </Button>
             <Button
@@ -123,7 +128,7 @@ export default function NavbaComponent() {
             </DropdownTrigger>
             <DropdownMenu aria-label='User Actions' variant='flat'>
               <DropdownItem key='settings'>Ayarlarım</DropdownItem>
-              <DropdownItem key='logout' color='danger' >
+              <DropdownItem key='logout' color='danger'>
                 Çıkış Yap
               </DropdownItem>
             </DropdownMenu>
