@@ -338,7 +338,7 @@ const ApplicationForm = () => {
             <Input
               size='sm'
               variant='faded'
-              name='file'
+              name='file_path'
               type='file'
               placeholder='Dosya Yükleyiniz'
               isRequired
