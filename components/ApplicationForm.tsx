@@ -5,6 +5,12 @@ import React, { useEffect, useState } from 'react';
 import { MdAssignmentAdd } from 'react-icons/md';
 
 const ApplicationForm = () => {
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (event:any) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+  };
   const [selectedFaculty, setSelectedFaculty] = useState('');
   const [departments, setDepartments] = useState([] as string[]);
   const [activities, setActivities] = useState<any[]>([]);
@@ -16,39 +22,37 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-
+    formData.append('file', file!);
+  
     try {
       const response = await fetch(
         process.env.NEXT_PUBLIC_SERVER_URL + '/submissions',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+          body: formData,
         }
       );
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+  
       // Assuming Laravel returns the saved submission data in the response
       const responseData = await response.json();
       console.log(responseData);
-
+  
       // Reset the form after successful submission if needed
       event.currentTarget.reset();
-
+  
       // Handle any additional logic after successful submission
     } catch (error) {
       console.error('Error:', error);
       // Handle error if needed
     }
   };
+  
 
   const date = new Date();
   const currentMonth = date.getMonth();
@@ -89,7 +93,7 @@ const ApplicationForm = () => {
         );
         const data = await response.json();
         setActivities(data);
-        // Convert array to Set to remove duplicates
+        // Convert array to Set to remove duplicatesf
         const uniqueActivityTypes = new Set<string>(
           data?.map((item: any) => item?.academic_activity_type)
         );
@@ -336,6 +340,7 @@ const ApplicationForm = () => {
             />
 
             <Input
+            onChange={handleFileChange}
               size='sm'
               variant='faded'
               name='file_path'
