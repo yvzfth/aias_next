@@ -7,7 +7,7 @@ import { MdAssignmentAdd } from 'react-icons/md';
 const ApplicationForm = () => {
   const [file, setFile] = useState(null);
 
-  const handleFileChange = (event:any) => {
+  const handleFileChange = (event: any) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
   };
@@ -22,10 +22,10 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     const formData = new FormData(event.currentTarget);
     formData.append('file', file!);
-  
+
     try {
       const response = await fetch(
         process.env.NEXT_PUBLIC_SERVER_URL + '/submissions',
@@ -34,25 +34,24 @@ const ApplicationForm = () => {
           body: formData,
         }
       );
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       // Assuming Laravel returns the saved submission data in the response
       const responseData = await response.json();
       console.log(responseData);
-  
+
       // Reset the form after successful submission if needed
       event.currentTarget.reset();
-  
+
       // Handle any additional logic after successful submission
     } catch (error) {
       console.error('Error:', error);
       // Handle error if needed
     }
   };
-  
 
   const date = new Date();
   const currentMonth = date.getMonth();
@@ -144,7 +143,7 @@ const ApplicationForm = () => {
               // className='w-[11.28rem] -mt-[4.5rem] absolute'
             >
               {next12Months.map((month, index) => (
-                <SelectItem value={month} key={index}>
+                <SelectItem value={month} key={month}>
                   {month}
                 </SelectItem>
               ))}
@@ -159,7 +158,10 @@ const ApplicationForm = () => {
               defaultValue={
                 JSON.parse(localStorage.getItem('user') as any)?.firstname ?? ''
               }
-              disabled
+              value={
+                JSON.parse(localStorage.getItem('user') as any)?.firstname ?? ''
+              }
+              // disabled
               isReadOnly
             />
             <Input
@@ -172,7 +174,10 @@ const ApplicationForm = () => {
               defaultValue={
                 JSON.parse(localStorage.getItem('user') as any)?.lastname ?? ''
               }
-              disabled
+              value={
+                JSON.parse(localStorage.getItem('user') as any)?.lastname ?? ''
+              }
+              // disabled
               isReadOnly
             />
             <Input
@@ -184,7 +189,10 @@ const ApplicationForm = () => {
               defaultValue={
                 JSON.parse(localStorage.getItem('user') as any)?.email ?? ''
               }
-              disabled
+              value={
+                JSON.parse(localStorage.getItem('user') as any)?.email ?? ''
+              }
+              // disabled
               isRequired
               isReadOnly
             />
@@ -288,7 +296,6 @@ const ApplicationForm = () => {
               isRequired
             >
               {[...Array(10)].map((_, index) => {
-                console.log(index + 1);
                 return (
                   <SelectItem key={String(index + 1)} value={String(index + 1)}>
                     {String(index + 1)}
@@ -340,7 +347,7 @@ const ApplicationForm = () => {
             />
 
             <Input
-            onChange={handleFileChange}
+              onChange={handleFileChange}
               size='sm'
               variant='faded'
               name='file_path'

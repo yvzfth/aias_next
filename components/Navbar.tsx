@@ -20,8 +20,10 @@ import {
   User,
 } from '@nextui-org/react';
 import { FaPlus } from 'react-icons/fa6';
+import { useRouter } from 'next/navigation';
 
 export default function NavbaComponent() {
+  const router = useRouter();
   const pathname = usePathname();
   const currentPath = pathname.split('/').pop() || 'index';
 
@@ -127,8 +129,34 @@ export default function NavbaComponent() {
               <Avatar as='button' color='primary' size='sm' alt='avatar' />
             </DropdownTrigger>
             <DropdownMenu aria-label='User Actions' variant='flat'>
-              <DropdownItem key='settings'>Ayarlarım</DropdownItem>
-              <DropdownItem key='logout' color='danger'>
+              <DropdownItem
+                key='profile'
+                onClick={() => router.push('/profile')}
+              >
+                Profil
+              </DropdownItem>
+              <DropdownItem
+                key='activity_settings'
+                onClick={() => router.push('/activity_settings')}
+              >
+                Faaliyet Ayarları
+              </DropdownItem>
+              <DropdownItem
+                key='k_settings'
+                onClick={() => router.push('/k_settings')}
+              >
+                Katsayı Ayarları
+              </DropdownItem>
+
+              <DropdownItem
+                key='logout'
+                color='danger'
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  return router.push('/signin');
+                }}
+              >
                 Çıkış Yap
               </DropdownItem>
             </DropdownMenu>
@@ -149,8 +177,33 @@ export default function NavbaComponent() {
               </Button>
             </DropdownTrigger>
             <DropdownMenu aria-label='User Actions' variant='flat'>
-              <DropdownItem key='settings'>Ayarlarım</DropdownItem>
-              <DropdownItem key='logout' color='danger'>
+              <DropdownItem
+                key='profile'
+                onClick={() => router.push('/profile')}
+              >
+                Profil
+              </DropdownItem>
+              <DropdownItem
+                key='activity_settings'
+                onClick={() => router.push('/activity_settings')}
+              >
+                Faaliyet Ayarları
+              </DropdownItem>
+              <DropdownItem
+                key='k_settings'
+                onClick={() => router.push('/k_settings')}
+              >
+                Katsayı Ayarları
+              </DropdownItem>
+              <DropdownItem
+                key='logout'
+                color='danger'
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  return router.push('/signin');
+                }}
+              >
                 Çıkış Yap
               </DropdownItem>
             </DropdownMenu>
