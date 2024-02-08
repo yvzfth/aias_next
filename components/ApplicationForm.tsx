@@ -1,24 +1,53 @@
 import { FacultiesAndDepartments } from '@/utils';
 import { Button, Card, Input, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdAssignmentAdd } from 'react-icons/md';
 
 const ApplicationForm = () => {
   const [selectedFaculty, setSelectedFaculty] = useState('');
   const [departments, setDepartments] = useState([] as string[]);
-
+  const [activities, setActivities] = useState<any[]>([]);
   const handleFacultyChange = (value: string) => {
     console.log(value);
     setSelectedFaculty(value);
     setDepartments(FacultiesAndDepartments[value]);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
+
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_SERVER_URL + '/submissions',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Assuming Laravel returns the saved submission data in the response
+      const responseData = await response.json();
+      console.log(responseData);
+
+      // Reset the form after successful submission if needed
+      event.currentTarget.reset();
+
+      // Handle any additional logic after successful submission
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error if needed
+    }
   };
 
   const date = new Date();
@@ -42,6 +71,49 @@ const ApplicationForm = () => {
   for (let i = 0; i < 12; i++) {
     next12Months.push(monthNames[(currentMonth + i) % 12]);
   }
+  const [academicActivityTypes, setAcademicActivityTypes] = useState<string[]>(
+    []
+  );
+  const [filteredActivities, setFilteredActivities] = useState<
+    { id: string; description: string }[]
+  >([]);
+  const [selectedActivityType, setSelectedActivityType] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    const fetchAcademicActivityTypes = async () => {
+      try {
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_SERVER_URL + '/activities'
+        );
+        const data = await response.json();
+        setActivities(data);
+        // Convert array to Set to remove duplicates
+        const uniqueActivityTypes = new Set<string>(
+          data?.map((item: any) => item?.academic_activity_type)
+        );
+        // Convert Set back to array
+        setAcademicActivityTypes(Array.from(uniqueActivityTypes));
+      } catch (error) {
+        console.error('Error fetching academic activity types:', error);
+      }
+    };
+
+    fetchAcademicActivityTypes();
+  }, []);
+  // Function to handle academic activity type change
+  const handleAcademicActivityTypeChange = (selectedType: string) => {
+    setSelectedActivityType(selectedType);
+    // Filter activity IDs based on selected academic activity type
+    const filteredActivities = activities
+      .filter((item: any) => item.academic_activity_type === selectedType)
+      .map((item: any) => ({
+        id: item.activity_id,
+        description: item.description,
+      }));
+    setFilteredActivities(filteredActivities);
+  };
   return (
     <Card className='container lg:w-[800px] md:w-[600px] w-[400px] mx-auto my-8 p-10'>
       <Image
@@ -227,26 +299,32 @@ const ApplicationForm = () => {
               name='academic_activity_type'
               placeholder='Akademik Faaliyet Türü Seçiniz'
               isRequired
+              onChange={(e) => handleAcademicActivityTypeChange(e.target.value)}
             >
-              <SelectItem key={'research'} value='research'>
-                Research
-              </SelectItem>
-              <SelectItem key={'teaching'} value='teaching'>
-                Teaching
-              </SelectItem>
-              <SelectItem key={'administrative'} value='administrative'>
-                Administrative
-              </SelectItem>
+              {academicActivityTypes?.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
             </Select>
-            <Input
+            <Select
               size='sm'
               variant='faded'
-              label='Faaliyet Adı'
+              label='Faaliyet'
               name='activity'
-              placeholder='Faaliyet Adı Seçiniz'
-              type='text'
+              placeholder='Faaliyet ID Seçiniz'
               isRequired
-            />
+              isDisabled={!selectedActivityType}
+            >
+              {filteredActivities.map((activity) => (
+                <SelectItem
+                  key={activity.id + ' - ' + activity.description}
+                  value={activity.id + ' - ' + activity.description}
+                >
+                  {`${activity.id} - ${activity.description}`}
+                </SelectItem>
+              ))}
+            </Select>
             <Input
               size='sm'
               variant='faded'
