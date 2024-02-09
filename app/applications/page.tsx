@@ -60,7 +60,7 @@ const Dashboard = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Teslim Süresi</th>
+                <th>Dönem</th>
                 <th>İsim</th>
                 <th>Soyisim</th>
                 <th>Email</th>
