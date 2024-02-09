@@ -1,53 +1,113 @@
-// components/Settings.js
-
-"use client"
-import { useState } from 'react';
+"Use Client"
+import React, { useState } from 'react';
+import { useClient } from 'next/data-client'; 
+import NavbarComponent from '@/components/Navbar';
+import { Container, Typography, TextField, Button, Grid, Card, CardContent, Avatar } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material';
+import axios from 'axios';
 
 const Settings = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
 
-  const updatePhone = async () => {
-    // Phone update logic here
-    console.log('Update Phone button clicked');
-  };
+  // Marking this component as a client-side component
+  useClient();
 
-  const updatePassword = async () => {
-    // Password update logic here
-    console.log('Update Password button clicked');
-  };
-
-  const updateEmail = async () => {
-    // Email update logic here
-    console.log('Update Email button clicked');
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+  
+    try {
+      const response = await axios.put('/api/user/update', {
+        phone,
+        password,
+        email,
+      });
+      setSuccess('Update successful');
+    } catch (error) {
+      setError('An error occurred while updating');
+      console.error('Error updating user information:', error);
+    }
   };
 
   return (
-    <div>
-      <h1>User Settings</h1>
-      <form>
-        <div>
-          <label>New Phone Number:</label>
-          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          <button type="button" onClick={updatePhone}>Update Phone</button>
-        </div>
-        <div>
-          <label>New Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm Password" />
-          <button type="button" onClick={updatePassword}>Update Password</button>
-        </div>
-        <div>
-          <label>New Email Address:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button type="button" onClick={updateEmail}>Update Email</button>
-        </div>
-      </form>
-    </div>
+    <>
+      <NavbarComponent />
+      <Container>
+        <Typography variant="h4" align="center" gutterBottom>
+          User Settings
+        </Typography>
+        <Grid container justifyContent="center">
+          <Grid item xs={12} sm={8} md={6}>
+            <Card>
+              <CardContent>
+                <Avatar sx={{ m: 'auto', bgcolor: 'secondary.main' }}>
+                  <AccountCircle />
+                </Avatar>
+                <Typography variant="h6" align="center" gutterBottom>
+                  Update Information
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    label="Phone"
+                    type="tel"
+                    fullWidth
+                    margin="normal"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <TextField
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    margin="normal"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <TextField
+                    label="Confirm Password"
+                    type="password"
+                    fullWidth
+                    margin="normal"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <TextField
+                    label="Email"
+                    type="email"
+                    fullWidth
+                    margin="normal"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  {error && (
+                    <Typography variant="body2" color="error" align="center">
+                      {error}
+                    </Typography>
+                  )}
+                  {success && (
+                    <Typography variant="body2" color="primary" align="center">
+                      {success}
+                    </Typography>
+                  )}
+                  <Button type="submit" variant="contained" color="primary" fullWidth>
+                    Update
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </>
   );
 };
-
 
 export default Settings;
