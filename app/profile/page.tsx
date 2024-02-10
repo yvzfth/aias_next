@@ -1,10 +1,13 @@
-"Use Client "
+"Use Client"
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useClient } from 'next/client';
+// "Use Client" ekleniyor
+// import { useClient } from 'next/client';
 
-const Settings = () => {
-  useClient(); // Client Component olduğunu belirtmek için kullanılıyor
+// useClient() kullanımı kaldırıldı
+
+const settings = () => {
+  // useClient(); // Client Component olduğunu belirtmek için "useClient" fonksiyonu kullanılıyor
 
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -13,29 +16,28 @@ const Settings = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    try {
-      const response = await axios.put('/api/customer/update', {  
-        phone,
-        password,
-        email,
-      });
-      setSuccess('Update successful');
-    } catch (error) {
-      setError('An error occurred while updating');
-      console.error('Error updating customer information:', error); 
-    }
-  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={async (e) => {
+        e.preventDefault();
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          return;
+        }
+
+        try {
+          const response = await axios.put('/api/customer/update', {
+            phone,
+            password,
+            email,
+          });
+          setSuccess('Update successful');
+        } catch (error) {
+          setError('An error occurred while updating');
+          console.error('Error updating customer information:', error);
+        }
+      }}>
         <label htmlFor="phone">Phone:</label>
         <input
           id="phone"
@@ -72,4 +74,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default settings;
