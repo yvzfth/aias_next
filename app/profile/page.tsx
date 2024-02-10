@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useClient } from 'next/client';
 
 const Settings = () => {
-  useClient(); /
+  useClient(); 
 
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
