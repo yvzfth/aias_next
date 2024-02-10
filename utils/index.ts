@@ -2,18 +2,21 @@ export enum NavItemsValues {
   Applications = 'Başvurular',
   Periods = 'Dönemler',
   Faculties = 'Fakülteler',
+  Users = 'Kullanıcılar',
 }
 interface INavItems {
   [key: string]: NavItemsValues;
   applications: NavItemsValues;
   periods: NavItemsValues;
   faculties: NavItemsValues;
+  users: NavItemsValues;
 }
 
 export const NAV_ITEMS: INavItems = {
   applications: NavItemsValues.Applications,
   periods: NavItemsValues.Periods,
   faculties: NavItemsValues.Faculties,
+  users: NavItemsValues.Users,
 };
 
 interface IFacultiesAndDepartments {

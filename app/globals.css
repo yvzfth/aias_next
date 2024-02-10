@@ -7,20 +7,24 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-/* body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
+body {
+  margin: 0;
+}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+@layer tailwind-base, primereact, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
 }
 
 @keyframes line-scale-pulse-out {
