@@ -1,12 +1,14 @@
-"Use Client"
+"use Client"
 import React, { useState } from 'react';
-import { useClient } from 'next/data-client'; 
 import NavbarComponent from '@/components/Navbar';
 import { Container, Typography, TextField, Button, Grid, Card, CardContent, Avatar } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import axios from 'axios';
+import { useClient } from 'next/client';
 
 const Settings = () => {
+  useClient(); /
+
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,18 +16,15 @@ const Settings = () => {
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
 
-  // Marking this component as a client-side component
-  useClient();
-
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-  
+
     try {
-      const response = await axios.put('/api/user/update', {
+      const response = await axios.put('/api/customer/update', {  
         phone,
         password,
         email,
@@ -33,16 +32,15 @@ const Settings = () => {
       setSuccess('Update successful');
     } catch (error) {
       setError('An error occurred while updating');
-      console.error('Error updating user information:', error);
+      console.error('Error updating customer information:', error); 
     }
   };
-
   return (
     <>
       <NavbarComponent />
       <Container>
         <Typography variant="h4" align="center" gutterBottom>
-          User Settings
+          Customer Settings
         </Typography>
         <Grid container justifyContent="center">
           <Grid item xs={12} sm={8} md={6}>
