@@ -20,7 +20,7 @@ const ActivitiesPage = () => {
     }
   };
 
-  const handleUpdate = async (id, field, value) => {
+  const handleUpdate = async (id: any, field: any, value: any) => {
     try {
       await axios.put(`https://your-laravel-backend.com/api/activities/${id}`, {
         [field]: value,
@@ -31,7 +31,7 @@ const ActivitiesPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: any) => {
     try {
       await axios.delete(
         `https://your-laravel-backend.com/api/activities/${id}`
