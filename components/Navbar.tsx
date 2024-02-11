@@ -22,7 +22,7 @@ import {
 import { FaPlus } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
 
-export default function NavbaComponent() {
+export default function NavbarComponent() {
   const router = useRouter();
   const pathname = usePathname();
   const currentPath = pathname.split('/').pop() || 'index';
