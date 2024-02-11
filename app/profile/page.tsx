@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import NavbarComponent from '@/components/Navbar';
 import Image from 'next/image';
+import { FaUserCircle } from 'react-icons/fa';
 const Page = () => {
     const [formData, setFormData] = useState({
         phone: '',
@@ -28,14 +29,19 @@ const Page = () => {
         <div>
             <NavbarComponent />
             <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-                <Image
-                    className='mx-auto p-4'
-                    width={150}
-                    height={66}
-                    alt='logo'
-                    src={'/logo-kucuk.png'}
-                />
-                <h2 className="text-2xl font-semibold mb-4">Kullanıcı Ayarları</h2>
+            <Image
+        className='mx-auto p-4'
+        width={150}
+        height={66}
+        alt='logo'
+        src={'/logo-kucuk.png'}
+      />
+                    
+                
+            <h2 className="text-2xl font-semibold mb-4 flex items-center">
+                    <FaUserCircle className="text-4xl text-gray-500 mr-1" /> {/* Avatar ikonu */}
+                    Kullanıcı Ayarları
+                </h2>
                 <div className="mb-4">
                     <div className="flex flex-col">
                         <label htmlFor="phone" className="text-gray-700 mb-1">Telefon Numarası:</label>
