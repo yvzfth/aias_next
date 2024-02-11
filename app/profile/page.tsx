@@ -6,6 +6,7 @@ import NavbarComponent from '@/components/Navbar';
 import Image from 'next/image';
 import { FaUserCircle } from 'react-icons/fa';
 import { Input, Button } from '@nextui-org/react';
+import { Card } from '@nextui-org/react';
 const Page = () => {
     const [formData, setFormData] = useState({
         phone: '',
@@ -30,7 +31,8 @@ const Page = () => {
     return (
         <div>
           <NavbarComponent />
-          <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+          
+          <div className='container mx-auto p-8'>
             <Image
               className='mx-auto p-4'
               width={150}
@@ -38,31 +40,32 @@ const Page = () => {
               alt='logo'
               src={'/logo-kucuk.png'}
             />
-      
+       <Card className='p-6'>
             <h2 className="text-2xl font-semibold mb-4 flex items-center">
               <FaUserCircle className="text-4xl text-gray-500 mr-1" /> {/* Avatar ikonu */}
               Kullanıcı Ayarları
             </h2>
       
-            <form onSubmit={handleSubmit} className='p-1'>
+            <form onSubmit={handleSubmit} className='p-6'>
               <div className='grid grid-cols-1 gap-4'>
                 <label htmlFor="phone" className="text-gray-700 mb-1">Telefon Numarası:</label>
                 <Input type="text" id="phone" name="phone" value={formData.phone} onChange={handleChange} />
-                <Button type="submit" className="mt-2" variant="flat" color="primary">Telefonu Güncelle</Button>
+                <Button type="submit" className="mt-2" variant="solid" color="primary">Telefonu Güncelle</Button>
               </div>
       
               <div className='grid grid-cols-1 gap-4'>
                 <label htmlFor="password" className="text-gray-700 mb-1">Şifre:</label>
                 <Input type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
-                <Button type="submit" className="mt-2" variant="flat" color="primary">Şifreyi Güncelle</Button>
+                <Button type="submit" className="mt-2" variant="solid" color="primary">Şifreyi Güncelle</Button>
               </div>
       
               <div className='grid grid-cols-1 gap-4'>
                 <label htmlFor="email" className="text-gray-700 mb-1">E-posta Adresi:</label>
                 <Input type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
-                <Button type="submit" className="mt-2" variant="flat" color="primary">E-postayı Güncelle</Button>
+                <Button type="submit" className="mt-2" variant="solid" color="primary">E-postayı Güncelle</Button>
               </div>
             </form>
+            </Card>
           </div>
           {/* Buraya sayfanın geri kalan kısmını ekleyebilirsiniz */}
         </div>
