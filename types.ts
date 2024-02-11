@@ -10,3 +10,11 @@ interface IUser {
   updatedAt?: string;
   token?: string;
 }
+
+interface Activity {
+  id: number;
+  academic_activity_type: string;
+  activity_id: string;
+  description: string;
+  point: number;
+}
