@@ -1,4 +1,4 @@
-import { FacultiesAndDepartments } from '@/utils';
+import { FacultiesAndDepartments, next12Months } from '@/utils';
 import { Button, Card, Input, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
@@ -28,7 +28,10 @@ const ApplicationForm = () => {
   const handleFacultyChange = (value: string) => {
     console.log(value);
     setSelectedFaculty(value);
-    setDepartments(FacultiesAndDepartments[value]);
+    setDepartments(
+      FacultiesAndDepartments.find((item) => item.faculty === value)
+        ?.departments ?? []
+    );
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -64,27 +67,6 @@ const ApplicationForm = () => {
     }
   };
 
-  const date = new Date();
-  const currentMonth = date.getMonth();
-  const monthNames = [
-    'Ocak',
-    'Şubat',
-    'Mart',
-    'Nisan',
-    'Mayıs',
-    'Haziran',
-    'Temmuz',
-    'Ağustos',
-    'Eylül',
-    'Ekim',
-    'Kasım',
-    'Aralık',
-  ];
-
-  let next12Months: any[] = [];
-  for (let i = 0; i < 12; i++) {
-    next12Months.push(monthNames[(currentMonth + i) % 12]);
-  }
   const [academicActivityTypes, setAcademicActivityTypes] = useState<string[]>(
     []
   );
@@ -178,8 +160,8 @@ const ApplicationForm = () => {
                     // className='w-[11.28rem] -mt-[4.5rem] absolute'
                   >
                     {next12Months.map((month, index) => (
-                      <SelectItem value={month} key={month}>
-                        {month}
+                      <SelectItem value={month.value} key={month.value}>
+                        {month.value}
                       </SelectItem>
                     ))}
                   </Select>
@@ -275,13 +257,11 @@ const ApplicationForm = () => {
                     onChange={(e) => handleFacultyChange(e.target.value)}
                     isRequired
                   >
-                    {Object.keys(FacultiesAndDepartments).map(
-                      (faculty, index) => (
-                        <SelectItem value={faculty} key={faculty}>
-                          {faculty}
-                        </SelectItem>
-                      )
-                    )}
+                    {FacultiesAndDepartments.map((faculty, index) => (
+                      <SelectItem value={faculty.faculty} key={faculty.faculty}>
+                        {faculty.faculty}
+                      </SelectItem>
+                    ))}
                   </Select>
                   <Select
                     size='sm'

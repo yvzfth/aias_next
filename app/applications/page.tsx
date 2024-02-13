@@ -181,7 +181,7 @@ const Dashboard = () => {
           onClick={exportExcel}
           data-pr-tooltip='XLS'
         />
-        <Button
+        {/* <Button
           title='PDF'
           type='button'
           icon='pi pi-file-pdf'
@@ -189,20 +189,11 @@ const Dashboard = () => {
           onClick={exportPdf}
           data-pr-tooltip='PDF'
         />
-
-        <Button
-          title='CSV'
-          label='CSV'
-          // icon='pi pi-file'
-          className='p-button-help'
-          onClick={exportCSV}
-        />
+    */}
       </div>
     );
   };
-  const exportCSV = () => {
-    dt.current?.exportCSV({ selectionOnly: true });
-  };
+
   const dt = useRef<DataTable<Submission[]>>(null);
   const confirmDeleteSubmission = (submission: Submission) => {
     setSubmission(submission);
@@ -305,7 +296,7 @@ const Dashboard = () => {
       <span className='p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
-          className='w-40 max-w-96'
+          className='w-40 lg:max-w-96'
           type='search'
           placeholder='Search...'
           value={globalFilterValue}
@@ -320,7 +311,7 @@ const Dashboard = () => {
       <div>
         <NavbarComponent />
         <div className='container mt-5 mx-auto'>
-          <div className='border border-black rounded-lg m-4 shadow-2xl'>
+          <div className='rounded-lg m-4 shadow-md'>
             <Toolbar
               className='mb-4'
               start={leftToolbarTemplate}

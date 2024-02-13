@@ -18,3 +18,8 @@ interface Activity {
   description: string;
   point: number;
 }
+
+interface Coefficient {
+  id: number;
+  value: number;
+}

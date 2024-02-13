@@ -21,11 +21,14 @@ import {
 } from '@nextui-org/react';
 import { FaPlus } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
+import PeriodsMenu from './PeriodsMenu';
+import FacultiesMenu from './FacultiesMenu';
 
 export default function NavbarComponent() {
   const router = useRouter();
   const pathname = usePathname();
-  const currentPath = pathname.split('/').pop() || 'index';
+  const currentPath = pathname;
+  // const currentPath = pathname.split('/').pop() || 'index';
 
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -79,29 +82,24 @@ export default function NavbarComponent() {
       </NavbarBrand>
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>
         {Object.keys(NAV_ITEMS).map((key, index) => (
-          <NavbarItem
-            key={index}
-            isActive={currentPath.includes(
-              key?.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')
-            )}
-          >
+          <NavbarItem key={index} isActive={currentPath.includes(key)}>
             <Link
-              color={
-                currentPath.includes(
-                  key?.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')
-                )
-                  ? 'primary'
-                  : 'foreground'
-              }
-              href={`/${key
-                ?.toLowerCase()
-                .replace(/ & /g, '-and-')
-                .replace(/ /g, '-')}`}
+              color={currentPath.includes(key) ? 'primary' : 'foreground'}
+              href={`/${key}`}
             >
               {NAV_ITEMS[key]}
             </Link>
           </NavbarItem>
         ))}
+        <NavbarItem key={'periods'} isActive={currentPath.includes('periods')}>
+          <PeriodsMenu />
+        </NavbarItem>
+        <NavbarItem
+          key={'faculties'}
+          isActive={currentPath.includes('faculties')}
+        >
+          <FacultiesMenu />
+        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem>
@@ -219,24 +217,10 @@ export default function NavbarComponent() {
       </NavbarContent>
       <NavbarMenu>
         {Object.keys(NAV_ITEMS).map((key, index) => (
-          <NavbarMenuItem
-            key={index}
-            isActive={currentPath.includes(
-              key?.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')
-            )}
-          >
+          <NavbarMenuItem key={index} isActive={currentPath.includes(key)}>
             <Link
-              color={
-                currentPath.includes(
-                  key?.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')
-                )
-                  ? 'primary'
-                  : 'foreground'
-              }
-              href={`/${key
-                ?.toLowerCase()
-                .replace(/ & /g, '-and-')
-                .replace(/ /g, '-')}`}
+              color={currentPath.includes(key) ? 'primary' : 'foreground'}
+              href={`/${key}`}
             >
               <div className='text-lg'>{NAV_ITEMS[key]}</div>
             </Link>
