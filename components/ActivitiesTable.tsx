@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Button, Input } from '@nextui-org/react';
+import {
+  Table,
+  Button,
+  Input,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+} from '@nextui-org/react';
 
 const ActivitiesPage = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -12,7 +21,7 @@ const ActivitiesPage = () => {
   const fetchActivities = async () => {
     try {
       const response = await axios.get(
-        'https://your-laravel-backend.com/api/activities'
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/activities`
       );
       setActivities(response.data);
     } catch (error) {
@@ -22,9 +31,12 @@ const ActivitiesPage = () => {
 
   const handleUpdate = async (id: any, field: any, value: any) => {
     try {
-      await axios.put(`https://your-laravel-backend.com/api/activities/${id}`, {
-        [field]: value,
-      });
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/activities/${id}`,
+        {
+          [field]: value,
+        }
+      );
       // Optionally, you can update the state or show a success message
     } catch (error) {
       console.error('Error:', error);
@@ -34,7 +46,7 @@ const ActivitiesPage = () => {
   const handleDelete = async (id: any) => {
     try {
       await axios.delete(
-        `https://your-laravel-backend.com/api/activities/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/activities/${id}`
       );
       setActivities((prevActivities) =>
         prevActivities.filter((activity) => activity.id !== id)
@@ -45,21 +57,20 @@ const ActivitiesPage = () => {
   };
 
   return (
-    <div className='container'>
+    <div className='container pb-8 px-8 mx-auto'>
+      <div className='text-3xl font-bold pl-4 mb-4'>Kayıtlı Faaliyetler</div>
       <Table>
-        <thead>
-          <tr>
-            <th>Akademik Faaliyet Türü</th>
-            <th>Faaliyet Id</th>
-            <th>Faaliyet</th>
-            <th>Değer</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+        <TableHeader>
+          <TableColumn>Akademik Faaliyet Türü</TableColumn>
+          <TableColumn>Faaliyet Id</TableColumn>
+          <TableColumn>Faaliyet</TableColumn>
+          <TableColumn>Değer</TableColumn>
+          <TableColumn>{''}</TableColumn>
+        </TableHeader>
+        <TableBody>
           {activities.map((activity) => (
-            <tr key={activity.id}>
-              <td>
+            <TableRow key={activity.id}>
+              <TableCell>
                 <Input
                   type='text'
                   value={activity.academic_activity_type}
@@ -71,8 +82,8 @@ const ActivitiesPage = () => {
                     )
                   }
                 />
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <Input
                   type='text'
                   value={activity.activity_id}
@@ -80,8 +91,8 @@ const ActivitiesPage = () => {
                     handleUpdate(activity.id, 'activity_id', e.target.value)
                   }
                 />
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <Input
                   type='textarea'
                   value={activity.description}
@@ -89,8 +100,8 @@ const ActivitiesPage = () => {
                     handleUpdate(activity.id, 'description', e.target.value)
                   }
                 />
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <Input
                   type='number'
                   value={String(activity.point)}
@@ -98,8 +109,8 @@ const ActivitiesPage = () => {
                     handleUpdate(activity.id, 'point', e.target.value)
                   }
                 />
-              </td>
-              <td>
+              </TableCell>
+              <TableCell>
                 <Button
                   onClick={() => handleDelete(activity.id)}
                   color='danger'
@@ -107,10 +118,10 @@ const ActivitiesPage = () => {
                 >
                   Sil
                 </Button>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </Table>
     </div>
   );
