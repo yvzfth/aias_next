@@ -57,6 +57,7 @@ export default function NavbarComponent() {
           'data-[active=true]:after:bg-primary',
         ],
       }}
+      className='overflow-visible'
     >
       <NavbarContent className='sm:hidden' justify='start'>
         <NavbarMenuToggle
@@ -126,7 +127,13 @@ export default function NavbarComponent() {
         <NavbarItem className='sm:hidden'>
           <Dropdown placement='bottom-start'>
             <DropdownTrigger>
-              <Avatar as='button' color='primary' size='sm' alt='avatar' />
+              <Avatar
+                as='button'
+                color='primary'
+                size='sm'
+                alt='avatar'
+                className='!w-[2rem] !h-[2rem]'
+              />
             </DropdownTrigger>
             <DropdownMenu aria-label='User Actions' variant='flat'>
               <DropdownItem

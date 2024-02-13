@@ -18,7 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='tr' suppressHydrationWarning={true}>
-      <body className={inter.className} suppressHydrationWarning={true}>
+      <body
+        className={inter.className + ' overflow-visible'}
+        suppressHydrationWarning={true}
+      >
         {children}
       </body>
     </html>

@@ -1,11 +1,11 @@
 'use client';
 import React from 'react';
-import NewActivityForm from '@/components/NewActivityForm';
 import ActivitiesTable from '@/components/ActivitiesTable';
+import NavbarComponent from '@/components/Navbar';
 const AcitivitySettings = () => {
   return (
     <div>
-      <NewActivityForm />
+      <NavbarComponent />
       <ActivitiesTable />
     </div>
   );

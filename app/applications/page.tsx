@@ -305,7 +305,7 @@ const Dashboard = () => {
       <span className='p-input-icon-left'>
         <i className='pi pi-search' />
         <InputText
-          className='w-96'
+          className='w-40 max-w-96'
           type='search'
           placeholder='Search...'
           value={globalFilterValue}
