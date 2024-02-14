@@ -147,8 +147,8 @@ export default function NavbarComponent() {
                 Faaliyet Ayarları
               </DropdownItem>
               <DropdownItem
-                key='k_settings'
-                onClick={() => router.push('/k_settings')}
+                key='CoefficientPage'
+                onClick={() => router.push('/CoefficientPage')}
               >
                 Katsayı Ayarları
               </DropdownItem>
@@ -195,8 +195,8 @@ export default function NavbarComponent() {
                 Faaliyet Ayarları
               </DropdownItem>
               <DropdownItem
-                key='k_settings'
-                onClick={() => router.push('/k_settings')}
+                key='CoefficientPage'
+                onClick={() => router.push('/CoefficientPage')}
               >
                 Katsayı Ayarları
               </DropdownItem>

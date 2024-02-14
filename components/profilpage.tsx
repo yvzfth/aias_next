@@ -2,7 +2,7 @@
 
 import React, { useState, FormEvent } from 'react';
 import axios from 'axios';
-import NavbarComponent from '@/components/Navbar';
+
 import Image from 'next/image';
 import { FaUserCircle } from 'react-icons/fa';
 import { Input, Button } from '@nextui-org/react';
