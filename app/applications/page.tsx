@@ -111,9 +111,10 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          process.env.NEXT_PUBLIC_SERVER_URL + '/table'
+          process.env.NEXT_PUBLIC_SERVER_URL + '/submissions'
         );
-        setSubmissions(response.data);
+        setSubmissions(response?.data);
+        // setSubmissions([emptySubmission]);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -320,7 +321,7 @@ const Dashboard = () => {
             <DataTable
               ref={dt}
               header={header}
-              value={submissions}
+              value={submissions ?? []}
               tableStyle={{ minWidth: '50rem' }}
               removableSort
               // scrollable

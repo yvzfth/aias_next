@@ -4,6 +4,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { MdAssignmentAdd } from 'react-icons/md';
 import { Accordion, AccordionItem } from '@nextui-org/react';
+import FileUpload from './FileUpload';
 const ApplicationForm = () => {
   const [file, setFile] = useState(null);
   const [accordionItems, setAccordionItems] = useState([1]);
@@ -290,26 +291,24 @@ const ApplicationForm = () => {
                     type='text'
                     isRequired
                   />
-                  <div className='flex gap-2'>
-                    <Input
-                      size='sm'
-                      variant='faded'
-                      label='Temel Alan'
-                      name='basic_field'
-                      placeholder='Temel Alan Giriniz'
-                      type='text'
-                      isRequired
-                    />
-                    <Input
-                      size='sm'
-                      variant='faded'
-                      label='Bilimsel Alan'
-                      name='scientific_field'
-                      placeholder='Bilimsel Alan Giriniz'
-                      type='text'
-                      isRequired
-                    />
-                  </div>
+                  <Input
+                    size='sm'
+                    variant='faded'
+                    label='Temel Alan'
+                    name='basic_field'
+                    placeholder='Temel Alan Giriniz'
+                    type='text'
+                    isRequired
+                  />
+                  <Input
+                    size='sm'
+                    variant='faded'
+                    label='Bilimsel Alan'
+                    name='scientific_field'
+                    placeholder='Bilimsel Alan Giriniz'
+                    type='text'
+                    isRequired
+                  />
                   <Select
                     size='sm'
                     variant='faded'
@@ -374,7 +373,7 @@ const ApplicationForm = () => {
                     isRequired
                   />
 
-                  <Input
+                  {/* <Input
                     onChange={handleFileChange}
                     size='sm'
                     variant='faded'
@@ -383,9 +382,20 @@ const ApplicationForm = () => {
                     placeholder='Dosya Yükleyiniz'
                     isRequired
                     accept='application/pdf'
-                  />
+                  /> */}
                 </div>
+                {/* <input
+                  onChange={handleFileChange}
+                  // size='sm'
+                  // variant='faded'
+                  name='file_path'
+                  type='file'
+                  placeholder='Dosya Yükleyiniz'
+                  // isRequired
+                  accept='application/pdf'
+                /> */}
               </div>
+              <FileUpload />
               <div className='text-center'>
                 <Button
                   size='lg'
