@@ -7,7 +7,7 @@ const Page = () => {
   return (
     <div>
       <NavbarComponent />
-      {pathname}
+      {pathname && <div></div>}
     </div>
   );
 };
