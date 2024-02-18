@@ -41,6 +41,7 @@ export default function NavbarComponent() {
 
   return (
     <Navbar
+      position='static'
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
@@ -71,13 +72,25 @@ export default function NavbarComponent() {
       <NavbarContent className='sm:hidden pr-3' justify='center'>
         <Link href='/'>
           <NavbarBrand className=' flex gap-4'>
-            <Image width={50} height={50} alt='logo' src={'/logo-kucuk.png'} />
+            <Image
+              width={50}
+              height={50}
+              alt='logo'
+              src={'/logo-kucuk.png'}
+              className='w-auto h-auto'
+            />
           </NavbarBrand>
         </Link>
       </NavbarContent>
       <NavbarBrand className='hidden sm:flex'>
         <Link href='/' className='flex gap-4 items-center'>
-          <Image width={100} height={66} alt='logo' src={'/logo-kucuk.png'} />
+          <Image
+            width={100}
+            height={66}
+            alt='logo'
+            src={'/logo-kucuk.png'}
+            className='w-auto h-auto'
+          />
         </Link>
       </NavbarBrand>
       <NavbarContent className='hidden sm:flex gap-4' justify='center'>

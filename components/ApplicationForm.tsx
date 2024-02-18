@@ -1,70 +1,214 @@
-import { FacultiesAndDepartments, next12Months } from '@/utils';
+import { FacultiesAndDepartments, academicTitles, next12Months } from '@/utils';
 import { Button, Card, Input, Select, SelectItem } from '@nextui-org/react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { MdAssignmentAdd } from 'react-icons/md';
-import { Accordion, AccordionItem } from '@nextui-org/react';
+
+import { InputText } from 'primereact/inputtext';
+
+import { Accordion, AccordionTab } from 'primereact/accordion';
 import FileUpload from './FileUpload';
+import 'primeicons/primeicons.css';
+// import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import axios from 'axios';
+
 const ApplicationForm = () => {
+  const [user, setUser] = useState<IUser | null>(null);
+  const defaultApplication: Application = {
+    submission_period: '',
+    name: user?.firstname ?? '',
+    surname: user?.lastname ?? '',
+    email: user?.email ?? '',
+    title: '',
+    faculty: '',
+    department: '',
+    work_name: '',
+    basic_field: '',
+    scientific_field: '',
+    persons: '',
+    academic_activity_type: '',
+    activity: '',
+    doi_number: '',
+    file: null,
+  };
   const [file, setFile] = useState(null);
-  const [accordionItems, setAccordionItems] = useState([1]);
-  const [selectedFaculty, setSelectedFaculty] = useState('');
-  const [departments, setDepartments] = useState([] as string[]);
+  const [accordionItems, setAccordionItems] = useState<number[]>([1]);
+  const [applicationList, setApplicationList] = useState<Application[]>([]);
+  const [departments, setDepartments] = useState([] as { value: string }[]);
   const [activities, setActivities] = useState<any[]>([]);
-  const handleFileChange = (event: any) => {
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user')!);
+    setUser(userData);
+    if (userData) {
+      setApplicationList([defaultApplication]);
+    }
+  }, [user?.email]);
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { name, value } = event.target;
+    setApplicationList((prevApplicationList) => {
+      const updatedApplicationList = [...prevApplicationList];
+      updatedApplicationList[index - 1] = {
+        ...updatedApplicationList[index - 1],
+        [name]: value,
+      };
+      return updatedApplicationList;
+    });
+  };
+  const handleDropdownChange = (event: DropdownChangeEvent, index: number) => {
+    const { name, value } = event.target;
+
+    setApplicationList((prevApplicationList) => {
+      const updatedApplicationList = [...prevApplicationList];
+      updatedApplicationList[index - 1] = {
+        ...updatedApplicationList[index - 1],
+        [name]: value,
+      };
+      return updatedApplicationList;
+    });
+  };
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     if (event.target.files && event.target.files.length > 0) {
       const selectedFile = event.target.files[0];
-      setFile(selectedFile);
+      console.log('Selected File:', selectedFile);
+      setApplicationList((prevApplicationList) => {
+        return prevApplicationList.map((application, i) => {
+          if (i === index - 1) {
+            // Update the file property for the specific application
+            return {
+              ...application,
+              file: selectedFile,
+            };
+          }
+          return application; // Return unchanged application for other indexes
+        });
+      });
+      console.log('ApplicationList File', applicationList?.at(index - 1)?.file);
     }
   };
-  const handleAddAccordionItem = () => {
-    const newAccordionItems = [...accordionItems, accordionItems.length + 1];
-    setAccordionItems(newAccordionItems);
-  };
-  const handleRemoveAccordionItem = (index: any) => {
-    const newAccordionItems = accordionItems.filter((item) => item !== index);
-    setAccordionItems(newAccordionItems);
+  const handleRemoveFile = (item: number) => {
+    setApplicationList((prevFormDataList) => {
+      const updatedFormDataList = [...prevFormDataList];
+      updatedFormDataList[item - 1] = {
+        ...updatedFormDataList[item - 1],
+        file: null,
+      };
+      return updatedFormDataList;
+    });
   };
 
-  const handleFacultyChange = (value: string) => {
-    console.log(value);
-    setSelectedFaculty(value);
+  const handleAddAccordionItem = () => {
+    // Add a new FormData object to the formDataList array
+    setApplicationList((prevApplicationList) => [
+      ...prevApplicationList,
+      defaultApplication,
+    ]);
+    // Add a new accordion item
+    setAccordionItems((prevAccordionItems) => [
+      ...prevAccordionItems,
+      prevAccordionItems.length + 1,
+    ]);
+  };
+
+  const handleRemoveAccordionItem = (index: number) => {
+    // Remove the FormData object at the specified index from the formDataList array
+    setApplicationList((prevApplicationList) =>
+      prevApplicationList.filter((_, i) => i !== index)
+    );
+    // Remove the accordion item at the specified index
+    setAccordionItems((prevAccordionItems) =>
+      prevAccordionItems.filter((item) => item !== index)
+    );
+  };
+
+  const handleFacultyChange = (value: string, index: number) => {
+    setApplicationList((prevApplicationList) => {
+      const updatedApplicationList = [...prevApplicationList];
+      updatedApplicationList[index - 1] = {
+        ...updatedApplicationList[index - 1],
+        faculty: value,
+      };
+      return updatedApplicationList;
+    });
     setDepartments(
       FacultiesAndDepartments.find((item) => item.faculty === value)
         ?.departments ?? []
     );
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (formId: number) => {
+    // Find the form data with the specified ID
+    const formData = applicationList.find((data, index) => index === formId);
 
-    const formData = new FormData(event.currentTarget);
-    formData.append('file', file!);
+    // Check if formData is found
+    if (formData) {
+      try {
+        // Create a new FormData object
+        const formDataToSubmit = new FormData();
 
-    try {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_SERVER_URL + '/submissions',
-        {
-          method: 'POST',
-          body: formData,
+        // Append form data fields to formDataToSubmit
+        Object.entries(formData).forEach(([key, value]) => {
+          // Exclude the 'file' field because it needs to be handled separately
+          if (key !== 'file') {
+            formDataToSubmit.append(key, value as string);
+          }
+        });
+
+        // Append the file data separately
+        if (formData.file) {
+          formDataToSubmit.append('file', formData.file);
         }
-      );
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+        // Submit formDataToSubmit to server
+        const response = await axios.post(
+          process.env.NEXT_PUBLIC_SERVER_URL + '/submissions',
+          formDataToSubmit
+        );
+
+        if (
+          response.status !== 200 &&
+          response.status !== 201 &&
+          response.status !== 204
+        ) {
+          throw new Error('Network response was not ok');
+        }
+
+        // Handle successful submission
+        const responseData = await response.data;
+        console.log('Submitted Form Data:', responseData);
+
+        // Return the submitted data
+        return responseData;
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle error if needed
       }
+    } else {
+      console.error('Form data not found for ID:', formId);
+      // Handle error if form data is not found
+    }
+  };
 
-      // Assuming Laravel returns the saved submission data in the response
-      const responseData = await response.json();
-      console.log(responseData);
-
-      // Reset the form after successful submission if needed
-      event.currentTarget.reset();
-
-      // Handle any additional logic after successful submission
+  const handleSubmitAll = async () => {
+    try {
+      for (let i = 0; i < accordionItems.length; i++) {
+        const form = document.getElementById(
+          `form-${accordionItems[i]}`
+        ) as HTMLFormElement;
+        await handleSubmit(i);
+      }
     } catch (error) {
       console.error('Error:', error);
-      // Handle error if needed
     }
   };
 
@@ -74,9 +218,6 @@ const ApplicationForm = () => {
   const [filteredActivities, setFilteredActivities] = useState<
     { id: string; description: string }[]
   >([]);
-  const [selectedActivityType, setSelectedActivityType] = useState<
-    string | null
-  >(null);
 
   useEffect(() => {
     const fetchAcademicActivityTypes = async () => {
@@ -100,8 +241,19 @@ const ApplicationForm = () => {
     fetchAcademicActivityTypes();
   }, []);
   // Function to handle academic activity type change
-  const handleAcademicActivityTypeChange = (selectedType: string) => {
-    setSelectedActivityType(selectedType);
+  const handleAcademicActivityTypeChange = (
+    selectedType: string,
+    index: number
+  ) => {
+    // setSelectedActivityType(selectedType);
+    setApplicationList((prevApplicationList) => {
+      const updatedApplicationList = [...prevApplicationList];
+      updatedApplicationList[index - 1] = {
+        ...updatedApplicationList[index - 1],
+        academic_activity_type: selectedType,
+      };
+      return updatedApplicationList;
+    });
     // Filter activity IDs based on selected academic activity type
     const filteredActivities = activities
       .filter((item: any) => item.academic_activity_type === selectedType)
@@ -114,7 +266,7 @@ const ApplicationForm = () => {
   return (
     <Card className='container lg:w-[800px] md:w-[600px] w-[400px] mx-auto my-8 p-10'>
       <Image
-        className='mx-auto p-4'
+        className='mx-auto p-4 w-auto'
         width={150}
         height={66}
         alt='logo'
@@ -134,269 +286,196 @@ const ApplicationForm = () => {
       >
         Yeni Başvuru
       </Button>
-      <Accordion defaultExpandedKeys={['1']} variant='splitted'>
+      <Accordion multiple activeIndex={[0]}>
         {accordionItems.map((item) => (
-          <AccordionItem key={item} title={`Başvuru Formu ${item}`}>
+          <AccordionTab key={item} header={`Başvuru Formu ${item}`}>
             <div className='w-full items-end text-right'>
               <Button
                 onClick={() => handleRemoveAccordionItem(item)}
                 size='sm'
                 variant='solid'
                 color='danger'
-                className='mb-4  px-8'
+                className='mb-4 mr-1 px-8'
               >
                 Başvuruyu Kaldır
               </Button>
             </div>
-            <form onSubmit={handleSubmit} className='p-1'>
+            <form
+              id={`form-${item}`}
+              onSubmit={() => handleSubmit(item)}
+              className='p-1'
+            >
               <div className='grid grid-cols-2 gap-4'>
                 <div className='grid grid-cols-1 gap-4'>
-                  <Select
-                    size='sm'
-                    variant='faded'
+                  <Dropdown
                     name='submission_period'
                     placeholder='Başvuru Dönemi Seçiniz'
-                    label='Başvuru Dönemi'
-                    isRequired
-                    // className='w-[11.28rem] -mt-[4.5rem] absolute'
-                  >
-                    {next12Months.map((month, index) => (
-                      <SelectItem value={month.value} key={month.value}>
-                        {month.value}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Input
+                    required
+                    options={next12Months}
+                    optionLabel='value'
+                    optionValue='value'
+                    value={applicationList?.at(item - 1)?.submission_period}
+                    onChange={(e) => handleDropdownChange(e, item)}
+                  />
+                  <InputText
                     size='sm'
-                    variant='faded'
                     name='name'
-                    label='İsim'
                     type='text'
-                    isRequired
-                    defaultValue={
-                      JSON.parse(localStorage.getItem('user') as any)
-                        ?.firstname ?? ''
-                    }
-                    value={
-                      JSON.parse(localStorage.getItem('user') as any)
-                        ?.firstname ?? ''
-                    }
-                    // disabled
-                    isReadOnly
+                    required
+                    defaultValue={user?.firstname ?? ''}
+                    value={applicationList?.at(item - 1)?.name}
+                    disabled
+                    readOnly
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-                  <Input
+                  <InputText
                     size='sm'
-                    variant='faded'
                     name='surname'
-                    label='Soyisim'
                     type='text'
-                    isRequired
-                    defaultValue={
-                      JSON.parse(localStorage.getItem('user') as any)
-                        ?.lastname ?? ''
-                    }
-                    value={
-                      JSON.parse(localStorage.getItem('user') as any)
-                        ?.lastname ?? ''
-                    }
-                    // disabled
-                    isReadOnly
+                    required
+                    defaultValue={user?.lastname ?? ''}
+                    value={applicationList?.at(item - 1)?.surname}
+                    disabled
+                    readOnly
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-                  <Input
+                  <InputText
                     size='sm'
-                    variant='faded'
                     name='email'
-                    label='Email'
                     type='email'
-                    defaultValue={
-                      JSON.parse(localStorage.getItem('user') as any)?.email ??
-                      ''
-                    }
-                    value={
-                      JSON.parse(localStorage.getItem('user') as any)?.email ??
-                      ''
-                    }
-                    // disabled
-                    isRequired
-                    isReadOnly
+                    defaultValue={user?.email ?? ''}
+                    value={applicationList?.at(item - 1)?.email}
+                    disabled
+                    readOnly
+                    required
+                    onChange={(e) => handleInputChange(e, item)}
                   />
 
-                  <Select
-                    size='sm'
-                    variant='faded'
+                  <Dropdown
                     name='title'
-                    label='Ünvan'
                     placeholder='Ünvan Seçiniz'
-                    isRequired
-                  >
-                    <SelectItem key='prof' value='Prof. Dr.'>
-                      Prof. Dr.
-                    </SelectItem>
-                    <SelectItem key='doç' value='Doç. Dr.'>
-                      Doç. Dr.
-                    </SelectItem>
-                    <SelectItem key='dr öğr' value='Dr. Öğr. Üyesi.'>
-                      Dr. Öğr. Üyesi.
-                    </SelectItem>
-                    <SelectItem key='öğr' value='Öğr. Gör.'>
-                      Öğr. Gör.
-                    </SelectItem>
-                    <SelectItem key='arş' value='Arş. Gör.'>
-                      Arş. Gör.
-                    </SelectItem>
-                    <SelectItem key='uzm' value='Uzman. Gör.'>
-                      Uzman. Gör.
-                    </SelectItem>
-                  </Select>
-                  <Select
-                    size='sm'
-                    variant='faded'
-                    label='Fakülte'
+                    required
+                    options={academicTitles}
+                    optionLabel='value'
+                    optionValue='value'
+                    value={applicationList?.at(item - 1)?.title}
+                    onChange={(e) => handleDropdownChange(e, item)}
+                  />
+                  <Dropdown
                     placeholder='Fakülte Seçiniz'
                     name='faculty'
-                    value={selectedFaculty}
-                    onChange={(e) => handleFacultyChange(e.target.value)}
-                    isRequired
-                  >
-                    {FacultiesAndDepartments.map((faculty, index) => (
-                      <SelectItem value={faculty.faculty} key={faculty.faculty}>
-                        {faculty.faculty}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Select
-                    size='sm'
-                    variant='faded'
-                    label='Departman'
+                    value={applicationList?.at(item - 1)?.faculty}
+                    onChange={(e) => handleFacultyChange(e.target.value, item)}
+                    required
+                    options={FacultiesAndDepartments}
+                    optionLabel='faculty'
+                    optionValue='faculty'
+                  />
+
+                  <Dropdown
                     placeholder='Departman Seçiniz'
                     name='department'
-                    isRequired
-                    isDisabled={!selectedFaculty}
-                  >
-                    {departments?.map((department, index) => (
-                      <SelectItem value={department} key={department}>
-                        {department}
-                      </SelectItem>
-                    ))}
-                  </Select>
+                    required
+                    disabled={!applicationList?.at(item - 1)?.faculty}
+                    optionLabel='value'
+                    optionValue='value'
+                    options={departments}
+                    value={applicationList?.at(item - 1)?.department}
+                    onChange={(e) => handleDropdownChange(e, item)}
+                  ></Dropdown>
                 </div>
 
                 <div className='grid grid-cols-1 gap-4 relative'>
-                  <Input
+                  <InputText
                     size='sm'
-                    variant='faded'
-                    label='Eser Adı'
                     name='work_name'
                     placeholder='Eser Adı Giriniz'
                     type='text'
-                    isRequired
+                    required
+                    value={applicationList?.at(item - 1)?.work_name}
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-                  <Input
+                  <InputText
                     size='sm'
-                    variant='faded'
-                    label='Temel Alan'
                     name='basic_field'
                     placeholder='Temel Alan Giriniz'
                     type='text'
-                    isRequired
+                    required
+                    value={applicationList?.at(item - 1)?.basic_field}
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-                  <Input
+                  <InputText
                     size='sm'
-                    variant='faded'
-                    label='Bilimsel Alan'
                     name='scientific_field'
                     placeholder='Bilimsel Alan Giriniz'
                     type='text'
-                    isRequired
+                    required
+                    value={applicationList?.at(item - 1)?.scientific_field}
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-                  <Select
-                    size='sm'
-                    variant='faded'
+                  <Dropdown
                     name='persons'
-                    label='Kişi Sayısı'
                     placeholder='Kişi Sayısı Seçiniz'
-                    isRequired
-                  >
-                    {[...Array(10)].map((_, index) => {
-                      return (
-                        <SelectItem
-                          key={String(index + 1)}
-                          value={String(index + 1)}
-                        >
-                          {String(index + 1)}
-                        </SelectItem>
-                      );
-                    })}
-                  </Select>
-                  <Select
-                    size='sm'
-                    variant='faded'
-                    label='Faaliyet Türü'
+                    required
+                    options={[...Array(10)].fill(0).map((_, i) => i + 1)}
+                    value={applicationList?.at(item - 1)?.persons}
+                    onChange={(e) => handleDropdownChange(e, item)}
+                  />
+
+                  <Dropdown
                     name='academic_activity_type'
                     placeholder='Akademik Faaliyet Türü Seçiniz'
-                    isRequired
-                    onChange={(e) =>
-                      handleAcademicActivityTypeChange(e.target.value)
+                    required
+                    value={
+                      applicationList?.at(item - 1)?.academic_activity_type
                     }
-                  >
-                    {academicActivityTypes?.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Select
-                    size='sm'
-                    variant='faded'
-                    label='Faaliyet'
+                    options={academicActivityTypes?.map((type) => ({
+                      label: type,
+                      value: type,
+                    }))}
+                    onChange={(e) =>
+                      handleAcademicActivityTypeChange(e.target.value, item)
+                    }
+                  />
+
+                  <Dropdown
                     name='activity'
                     placeholder='Faaliyet ID Seçiniz'
-                    isRequired
-                    isDisabled={!selectedActivityType}
-                  >
-                    {filteredActivities.map((activity) => (
-                      <SelectItem
-                        key={activity.id + ' - ' + activity.description}
-                        value={activity.id + ' - ' + activity.description}
-                      >
-                        {`${activity.id} - ${activity.description}`}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Input
+                    required
+                    disabled={
+                      !applicationList?.at(item - 1)?.academic_activity_type
+                    }
+                    value={applicationList?.at(item - 1)?.activity}
+                    options={filteredActivities?.map((activity) => ({
+                      label: activity.id + ' - ' + activity.description,
+                      value: activity.id + ' - ' + activity.description,
+                    }))}
+                    onChange={(e) => handleDropdownChange(e, item)}
+                  />
+
+                  <InputText
                     size='sm'
-                    variant='faded'
-                    label='DOI | WOSS'
                     name='doi_number'
                     placeholder='DOI | WOSS Numarası'
                     type='text'
-                    isRequired
+                    required
+                    value={applicationList?.at(item - 1)?.doi_number}
+                    onChange={(e) => handleInputChange(e, item)}
                   />
-
-                  {/* <Input
-                    onChange={handleFileChange}
-                    size='sm'
-                    variant='faded'
-                    name='file_path'
-                    type='file'
-                    placeholder='Dosya Yükleyiniz'
-                    isRequired
-                    accept='application/pdf'
-                  /> */}
                 </div>
-                {/* <input
-                  onChange={handleFileChange}
-                  // size='sm'
-                  // variant='faded'
-                  name='file_path'
-                  type='file'
-                  placeholder='Dosya Yükleyiniz'
-                  // isRequired
-                  accept='application/pdf'
-                /> */}
               </div>
-              <FileUpload />
-              <div className='text-center'>
+              {/* <FileUpload /> */}
+              <input
+                className='w-full my-4 p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                onChange={(e) => handleFileChange(e, item)}
+                name='file'
+                type='file'
+                placeholder='Dosya Yükleyiniz'
+                required
+                accept='application/pdf'
+              />
+
+              {/* <div className='text-center'>
                 <Button
                   size='lg'
                   variant='solid'
@@ -406,11 +485,20 @@ const ApplicationForm = () => {
                 >
                   Başvuru Tamamla
                 </Button>
-              </div>
+              </div> */}
             </form>
-          </AccordionItem>
+          </AccordionTab>
         ))}
       </Accordion>
+      <Button
+        onClick={handleSubmitAll}
+        size='lg'
+        variant='solid'
+        color='primary'
+        className='my-6 font-bold px-16'
+      >
+        Tüm Başvuruları Gönder
+      </Button>
     </Card>
   );
 };
